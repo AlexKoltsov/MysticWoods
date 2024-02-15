@@ -1,13 +1,16 @@
 package com.kolts.mystic.woods.screen
 
+import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import ktx.actors.plusAssign
-import ktx.actors.setPosition
+import com.kolts.mystic.woods.component.ImageComponent
+import com.kolts.mystic.woods.system.RenderSystem
 import ktx.actors.stage
 import ktx.app.KtxScreen
+import ktx.ashley.entity
+import ktx.ashley.with
 import ktx.assets.DisposableContainer
 import ktx.assets.DisposableRegistry
 import ktx.assets.disposeSafely
@@ -18,21 +21,31 @@ class GameScreen(
 ) : KtxScreen, DisposableRegistry by disposableRegistry {
 
     private val stage: Stage = stage(viewport = ExtendViewport(16f, 9f)).alsoRegister()
-    private val texture: Texture = Texture("assets/graphic/player.png").alsoRegister()
+
+    private val engine: Engine = Engine()
+        .apply {
+            addSystem(RenderSystem(stage))
+        }
 
     override fun show() {
         log.debug { "GameScreen gets shown" }
-        stage += Image(texture).apply {
-            setPosition(1, 1)
-            setSize(1f, 1f)
+
+        val texture = Texture("assets/graphic/player.png").alsoRegister()
+
+        repeat(5) {
+            engine.entity {
+                with<ImageComponent> {
+                    image = Image(texture).apply {
+                        setSize(1f, 1f)
+                        setPosition(it.toFloat(), it.toFloat())
+                    }
+                }
+            }
         }
     }
 
     override fun render(delta: Float) {
-        with(stage) {
-            act(delta)
-            draw()
-        }
+        engine.update(delta);
     }
 
     override fun dispose() {
