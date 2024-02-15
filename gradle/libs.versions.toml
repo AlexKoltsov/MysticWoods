@@ -7,12 +7,16 @@ gdx = { group = "com.badlogicgames.gdx", name = "gdx", version.ref = "gdx" }
 gdx-backend-lwjgl3 = { group = "com.badlogicgames.gdx", name = "gdx-backend-lwjgl3", version.ref = "gdx" }
 gdx-platform = { group = "com.badlogicgames.gdx", name = "gdx-platform", version.ref = "gdx" }
 
-ktx = { group = "io.github.libktx", name = "ktx-app", version.ref = "ktx" }
+ktx-app = { group = "io.github.libktx", name = "ktx-app", version.ref = "ktx" }
+ktx-log = { group = "io.github.libktx", name = "ktx-log", version.ref = "ktx" }
+ktx-graphics = { group = "io.github.libktx", name = "ktx-graphics", version.ref = "ktx" }
+ktx-actors = { group = "io.github.libktx", name = "ktx-actors", version.ref = "ktx" }
+ktx-assets = { group = "io.github.libktx", name = "ktx-assets", version.ref = "ktx" }
 
 
 [bundles]
 gdx = ["gdx", "gdx-backend-lwjgl3", "gdx-platform"]
-ktx = ["ktx"]
+ktx = ["ktx-app", "ktx-log", "ktx-graphics", "ktx-actors", "ktx-assets"]
 
 [plugins]
 versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }

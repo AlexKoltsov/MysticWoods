@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api(libs.gdx)
-    api(libs.ktx)
+    api(libs.bundles.ktx)
 }
