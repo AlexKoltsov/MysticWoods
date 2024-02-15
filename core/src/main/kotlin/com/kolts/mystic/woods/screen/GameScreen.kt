@@ -1,12 +1,14 @@
 package com.kolts.mystic.woods.screen
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.kolts.mystic.woods.component.ImageComponent
 import com.kolts.mystic.woods.system.RenderSystem
+import ktx.actors.setPosition
 import ktx.actors.stage
 import ktx.app.KtxScreen
 import ktx.ashley.entity
@@ -30,18 +32,27 @@ class GameScreen(
     override fun show() {
         log.debug { "GameScreen gets shown" }
 
-        val texture = Texture("assets/graphic/player.png").alsoRegister()
+        val textureAtlas = TextureAtlas("assets/graphic/mysticWoods.atlas").alsoRegister()
 
-        repeat(5) {
-            engine.entity {
-                with<ImageComponent> {
-                    image = Image(texture).apply {
-                        setSize(1f, 1f)
-                        setPosition(it.toFloat(), it.toFloat())
+        engine.entity {
+            with<ImageComponent> {
+                image = Image(TextureRegion(textureAtlas.findRegion("player"), 0, 0, 48, 48))
+                    .apply {
+                        setSize(3f, 3f)
                     }
-                }
             }
         }
+
+        engine.entity {
+            with<ImageComponent> {
+                image = Image(TextureRegion(textureAtlas.findRegion("slime"), 0, 0, 32, 32))
+                    .apply {
+                        setSize(3f, 3f)
+                        setPosition(5, 0)
+                    }
+            }
+        }
+
     }
 
     override fun render(delta: Float) {
