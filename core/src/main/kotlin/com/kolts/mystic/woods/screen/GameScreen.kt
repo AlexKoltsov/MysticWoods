@@ -2,11 +2,13 @@ package com.kolts.mystic.woods.screen
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.kolts.mystic.woods.component.AnimationComponent
+import com.kolts.mystic.woods.component.AnimationModel
 import com.kolts.mystic.woods.component.ImageComponent
+import com.kolts.mystic.woods.system.AnimationSystem
 import com.kolts.mystic.woods.system.RenderSystem
 import ktx.actors.setPosition
 import ktx.actors.stage
@@ -23,36 +25,31 @@ class GameScreen(
 ) : KtxScreen, DisposableRegistry by disposableRegistry {
 
     private val stage: Stage = stage(viewport = ExtendViewport(16f, 9f)).alsoRegister()
+    private val textureAtlas = TextureAtlas("assets/graphic/mysticWoods.atlas").alsoRegister()
 
     private val engine: Engine = Engine()
         .apply {
+            addSystem(AnimationSystem(textureAtlas))
             addSystem(RenderSystem(stage))
         }
 
     override fun show() {
         log.debug { "GameScreen gets shown" }
 
-        val textureAtlas = TextureAtlas("assets/graphic/mysticWoods.atlas").alsoRegister()
-
-        engine.entity {
-            with<ImageComponent> {
-                image = Image(TextureRegion(textureAtlas.findRegion("player"), 0, 0, 48, 48))
-                    .apply {
-                        setSize(3f, 3f)
+        AnimationModel.entries
+            .mapIndexed { index, model ->
+                engine.entity {
+                    with<ImageComponent> {
+                        image = Image().apply {
+                            setSize(1f, 1f)
+                            setPosition(index, 1)
+                        }
                     }
-            }
-        }
-
-        engine.entity {
-            with<ImageComponent> {
-                image = Image(TextureRegion(textureAtlas.findRegion("slime"), 0, 0, 32, 32))
-                    .apply {
-                        setSize(3f, 3f)
-                        setPosition(5, 0)
+                    with<AnimationComponent> {
+                        this.model = model
                     }
+                }
             }
-        }
-
     }
 
     override fun render(delta: Float) {
