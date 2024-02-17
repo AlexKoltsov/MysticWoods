@@ -24,12 +24,12 @@ class RenderSystem(
 
     private val mapRenderer = OrthogonalTiledMapRenderer(null, 1 / 16f, stage.batch).alsoRegister()
 
-    override fun addedToEngine(engine: Engine?) {
+    override fun addedToEngine(engine: Engine) {
         super.addedToEngine(engine)
         mapRenderer.map = TmxMapLoader().load("map/map.tmx")
     }
 
-    override fun removedFromEngine(engine: Engine?) {
+    override fun removedFromEngine(engine: Engine) {
         super.removedFromEngine(engine)
         dispose()
     }

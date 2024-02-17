@@ -2,26 +2,24 @@ package com.kolts.mystic.woods.system
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.Animation
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.kolts.mystic.woods.TextureAtlasAsset
 import com.kolts.mystic.woods.component.*
 import ktx.app.gdxError
 import ktx.ashley.allOf
 import ktx.collections.map
 import ktx.log.logger
 
-
-class AnimationSystem(
-    private val textureAtlas: TextureAtlas,
-) : IteratingSystem(
-    allOf(ImageComponent::class, AnimationComponent::class).get()
-) {
+class AnimationSystem(private val assetManager: AssetManager) :
+    IteratingSystem(allOf(ImageComponent::class, AnimationComponent::class).get()) {
 
     private val cachedAnimations = mutableMapOf<String, Animation<TextureRegionDrawable>>()
+    private val mysticWoodsAtlas = assetManager[TextureAtlasAsset.MYSTIC_WOODS.assetDescriptor]
 
-    override fun processEntity(entity: Entity?, deltaTime: Float) {
-        val animationComponent = entity!!.animationComponent!!
+    override fun processEntity(entity: Entity, deltaTime: Float) {
+        val animationComponent = entity.animationComponent!!
         val imageComponent = entity.imageComponent!!
 
         animationComponent.stateTime += deltaTime
@@ -32,7 +30,7 @@ class AnimationSystem(
         val atlasKey = animationModel.atlasKey
         return cachedAnimations.getOrPut(atlasKey) {
             log.debug { "New animation is created for $atlasKey" }
-            val regions = textureAtlas.findRegions(atlasKey)
+            val regions = mysticWoodsAtlas.findRegions(atlasKey)
             if (regions.isEmpty) {
                 gdxError("There are no texture regions for $atlasKey")
             }

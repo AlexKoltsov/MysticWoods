@@ -1,10 +1,10 @@
 package com.kolts.mystic.woods.screen
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.kolts.mystic.woods.Game
 import com.kolts.mystic.woods.component.AnimationComponent
 import com.kolts.mystic.woods.component.AnimationModel
 import com.kolts.mystic.woods.component.ImageComponent
@@ -21,15 +21,15 @@ import ktx.assets.disposeSafely
 import ktx.log.logger
 
 class GameScreen(
+    private val game: Game,
     private val disposableRegistry: DisposableRegistry = DisposableContainer(),
 ) : KtxScreen, DisposableRegistry by disposableRegistry {
 
     private val stage: Stage = stage(viewport = ExtendViewport(16f, 9f)).alsoRegister()
-    private val textureAtlas = TextureAtlas("graphic/mysticWoods.atlas").alsoRegister()
 
     private val engine: Engine = Engine()
         .apply {
-            addSystem(AnimationSystem(textureAtlas))
+            addSystem(AnimationSystem(game.assetManager))
             addSystem(RenderSystem(stage))
         }
 
