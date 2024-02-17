@@ -25,7 +25,7 @@ class GameScreen(
 ) : KtxScreen, DisposableRegistry by disposableRegistry {
 
     private val stage: Stage = stage(viewport = ExtendViewport(16f, 9f)).alsoRegister()
-    private val textureAtlas = TextureAtlas("assets/graphic/mysticWoods.atlas").alsoRegister()
+    private val textureAtlas = TextureAtlas("graphic/mysticWoods.atlas").alsoRegister()
 
     private val engine: Engine = Engine()
         .apply {
@@ -42,7 +42,7 @@ class GameScreen(
                     with<ImageComponent> {
                         image = Image().apply {
                             setSize(1f, 1f)
-                            setPosition(index, 1)
+                            setPosition(index, 0)
                         }
                     }
                     with<AnimationComponent> {
@@ -58,6 +58,7 @@ class GameScreen(
 
     override fun dispose() {
         disposableRegistry.disposeSafely()
+        engine.removeAllSystems()
     }
 
     override fun resize(width: Int, height: Int) {

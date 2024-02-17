@@ -6,3 +6,11 @@ dependencies {
     api(libs.gdx)
     api(libs.bundles.ktx)
 }
+
+sourceSets {
+    main {
+        resources {
+            srcDir("$rootDir/assets")
+        }
+    }
+}
