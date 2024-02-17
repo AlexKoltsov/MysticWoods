@@ -3,7 +3,6 @@ package com.kolts.mystic.woods
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.kolts.mystic.woods.screen.GameScreen
 import com.kolts.mystic.woods.screen.LoadingScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -25,5 +24,9 @@ class Game(
 
     override fun dispose() {
         disposableRegistry.disposeSafely()
+    }
+
+    companion object {
+        const val UNIT_SCALE = 1 / 16f
     }
 }

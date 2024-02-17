@@ -12,7 +12,7 @@ import ktx.ashley.allOf
 import ktx.collections.map
 import ktx.log.logger
 
-class AnimationSystem(private val assetManager: AssetManager) :
+class AnimationSystem(assetManager: AssetManager) :
     IteratingSystem(allOf(ImageComponent::class, AnimationComponent::class).get()) {
 
     private val cachedAnimations = mutableMapOf<String, Animation<TextureRegionDrawable>>()
