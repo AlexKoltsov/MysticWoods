@@ -6,6 +6,10 @@ import com.badlogic.gdx.math.Vector2
 import ktx.ashley.optionalPropertyFor
 import ktx.math.vec2
 
+enum class SpawnType {
+    PLAYER
+}
+
 data class SpawnConfiguration(
     val model: AnimationModel,
 )
@@ -13,6 +17,7 @@ data class SpawnConfiguration(
 var Entity.spawnComponent by optionalPropertyFor<SpawnComponent>()
 
 class SpawnComponent(
-    var type: String = "",
     var location: Vector2 = vec2(),
-) : Component
+) : Component {
+    lateinit var type: SpawnType
+}

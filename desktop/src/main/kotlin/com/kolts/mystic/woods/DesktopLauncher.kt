@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 
 fun main() {
-    val game = Game()
+    val game = MysticWoodsGame()
     val config = Lwjgl3ApplicationConfiguration()
         .apply {
             setTitle("MysticWoods")

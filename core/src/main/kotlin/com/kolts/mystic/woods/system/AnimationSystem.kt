@@ -10,9 +10,13 @@ import com.kolts.mystic.woods.component.*
 import ktx.app.gdxError
 import ktx.ashley.allOf
 import ktx.collections.map
+import ktx.inject.Context
 import ktx.log.logger
 
-class AnimationSystem(assetManager: AssetManager) :
+class AnimationSystem(
+    context: Context,
+    assetManager: AssetManager = context.inject(),
+) :
     IteratingSystem(allOf(ImageComponent::class, AnimationComponent::class).get()) {
 
     private val cachedAnimations = mutableMapOf<String, Animation<TextureRegionDrawable>>()
@@ -21,9 +25,10 @@ class AnimationSystem(assetManager: AssetManager) :
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val animationComponent = entity.animationComponent!!
         val imageComponent = entity.imageComponent!!
+        val animation = animation(animationComponent.model)
 
         animationComponent.stateTime += deltaTime
-        imageComponent.image.drawable = animation(animationComponent.model).getKeyFrame(animationComponent.stateTime)
+        imageComponent.image.drawable = animation.getKeyFrame(animationComponent.stateTime)
     }
 
     private fun animation(animationModel: AnimationModel): Animation<TextureRegionDrawable> {

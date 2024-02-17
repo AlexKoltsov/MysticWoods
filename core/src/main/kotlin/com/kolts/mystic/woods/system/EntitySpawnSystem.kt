@@ -9,8 +9,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.kolts.mystic.woods.Game
-import com.kolts.mystic.woods.Game.Companion.UNIT_SCALE
+import com.kolts.mystic.woods.MysticWoodsGame.Companion.UNIT_SCALE
 import com.kolts.mystic.woods.TextureAtlasAsset
 import com.kolts.mystic.woods.component.*
 import com.kolts.mystic.woods.event.MapChangedEvent
@@ -19,18 +18,20 @@ import ktx.ashley.add
 import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.with
+import ktx.inject.Context
 import ktx.log.logger
 import ktx.math.times
 import ktx.math.vec2
 import ktx.tiled.property
 
 class EntitySpawnSystem(
-    private val engine: Engine,
-    private val assetManager: AssetManager,
+    context: Context,
+    private val engine: Engine = context.inject(),
+    private val assetManager: AssetManager = context.inject(),
 ) :
     IteratingSystem(allOf(SpawnComponent::class).get()), EventListener {
 
-    private val spawnConfigurationCache = mutableMapOf<String, SpawnConfiguration>()
+    private val spawnConfigurationCache = mutableMapOf<SpawnType, SpawnConfiguration>()
     private val sizeCache = mutableMapOf<AnimationModel, Vector2>()
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
@@ -56,10 +57,9 @@ class EntitySpawnSystem(
         }
     }
 
-    private fun getSpawnConfiguration(type: String) = spawnConfigurationCache.getOrPut(type) {
-        when (type.lowercase()) {
-            "player" -> SpawnConfiguration(AnimationModel.PLAYER_IDLE)
-            else -> gdxError("Unknown object type $type")
+    private fun getSpawnConfiguration(type: SpawnType) = spawnConfigurationCache.getOrPut(type) {
+        when (type) {
+            SpawnType.PLAYER -> SpawnConfiguration(AnimationModel.PLAYER_IDLE)
         }
     }
 
@@ -75,15 +75,16 @@ class EntitySpawnSystem(
     override fun handle(event: Event): Boolean {
         return when (event) {
             is MapChangedEvent -> {
-                event.map.layers["entities"]
-                    ?.objects
-                    ?.filterIsInstance<TiledMapTileMapObject>()
-                    ?.forEach {
+                val entitiesLayer = event.map.layers["entities"] ?: gdxError("Entities layer not found")
+                entitiesLayer
+                    .objects
+                    .filterIsInstance<TiledMapTileMapObject>()
+                    .forEach { mapObject ->
                         engine.entity {
                             with<SpawnComponent> {
-                                type = it.tile.property("type") ?: gdxError("Map object ${it.name} doesn't have a type")
-                                location.x = it.x * Game.UNIT_SCALE
-                                location.y = it.y * Game.UNIT_SCALE
+                                type = spawnType(mapObject)
+                                location.x = mapObject.x * UNIT_SCALE
+                                location.y = mapObject.y * UNIT_SCALE
                             }
                         }
                     }
@@ -95,6 +96,8 @@ class EntitySpawnSystem(
         }
     }
 
+    private fun spawnType(mapObject: TiledMapTileMapObject): SpawnType = mapObject.tile.property<String>("type")
+        .let { SpawnType.valueOf(it.uppercase()) }
 
     companion object {
         private val log = logger<EntitySpawnSystem>()

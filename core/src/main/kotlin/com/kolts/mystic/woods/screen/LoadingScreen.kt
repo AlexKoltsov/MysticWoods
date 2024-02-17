@@ -1,11 +1,17 @@
 package com.kolts.mystic.woods.screen
 
-import com.kolts.mystic.woods.Game
+import com.badlogic.gdx.assets.AssetManager
+import com.kolts.mystic.woods.MysticWoodsGame
 import com.kolts.mystic.woods.TextureAtlasAsset
 import ktx.app.KtxScreen
+import ktx.inject.Context
 import ktx.log.logger
 
-class LoadingScreen(private val game: Game) : KtxScreen {
+class LoadingScreen(
+    context: Context,
+    private val assetManager: AssetManager = context.inject(),
+    private val game: MysticWoodsGame = context.inject(),
+) : KtxScreen {
 
     override fun show() {
         log.debug { "LoadingScreen gets shown" }
@@ -14,14 +20,18 @@ class LoadingScreen(private val game: Game) : KtxScreen {
     }
 
     private fun loadAssets() {
-        TextureAtlasAsset.entries.forEach { game.assetManager.load(it.assetDescriptor) }
-        game.assetManager.finishLoading()
+        assetManager.apply {
+            TextureAtlasAsset.entries.forEach { load(it.assetDescriptor) }
+            finishLoading()
+        }
     }
 
     private fun changeScreen() {
-        game.addScreen(GameScreen(game))
-        game.setScreen<GameScreen>()
-        game.removeScreen<LoadingScreen>()
+        game.run {
+            addScreen(GameScreen(context))
+            setScreen<GameScreen>()
+            removeScreen<LoadingScreen>()
+        }
     }
 
     companion object {

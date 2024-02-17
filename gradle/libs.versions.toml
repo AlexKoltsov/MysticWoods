@@ -16,11 +16,12 @@ ktx-ashley = { group = "io.github.libktx", name = "ktx-ashley", version.ref = "k
 ktx-collections = { group = "io.github.libktx", name = "ktx-collections", version.ref = "ktx" }
 ktx-math = { group = "io.github.libktx", name = "ktx-math", version.ref = "ktx" }
 ktx-tiled = { group = "io.github.libktx", name = "ktx-tiled", version.ref = "ktx" }
+ktx-inject = { group = "io.github.libktx", name = "ktx-inject", version.ref = "ktx" }
 
 
 [bundles]
 gdx = ["gdx", "gdx-backend-lwjgl3", "gdx-platform"]
-ktx = ["ktx-app", "ktx-log", "ktx-graphics", "ktx-actors", "ktx-assets", "ktx-ashley", "ktx-collections", "ktx-math", "ktx-tiled"]
+ktx = ["ktx-app", "ktx-log", "ktx-graphics", "ktx-actors", "ktx-assets", "ktx-ashley", "ktx-collections", "ktx-math", "ktx-tiled", "ktx-inject"]
 
 [plugins]
 versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }

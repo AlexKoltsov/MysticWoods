@@ -4,52 +4,40 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.kolts.mystic.woods.Game
 import com.kolts.mystic.woods.event.MapChangedEvent
 import com.kolts.mystic.woods.event.fire
 import com.kolts.mystic.woods.system.AnimationSystem
 import com.kolts.mystic.woods.system.EntitySpawnSystem
 import com.kolts.mystic.woods.system.RenderSystem
-import ktx.actors.stage
 import ktx.app.KtxScreen
-import ktx.assets.DisposableContainer
-import ktx.assets.DisposableRegistry
-import ktx.assets.disposeSafely
+import ktx.inject.Context
 import ktx.log.logger
 
 class GameScreen(
-    private val game: Game,
-    private val disposableRegistry: DisposableRegistry = DisposableContainer(),
-) : KtxScreen, DisposableRegistry by disposableRegistry {
-
-    private val stage: Stage = stage(viewport = ExtendViewport(16f, 9f)).alsoRegister()
-
-    private val engine: Engine = Engine()
-        .apply {
-            addSystem(AnimationSystem(game.assetManager))
-            addSystem(RenderSystem(stage))
-            addSystem(EntitySpawnSystem(this, game.assetManager))
-
-            systems
-                .filterIsInstance<EventListener>()
-                .forEach { stage.addListener(it) }
-        }
+    private val context: Context,
+    private val engine: Engine = context.inject(),
+    private val stage: Stage = context.inject(),
+) : KtxScreen {
 
     override fun show() {
         log.debug { "GameScreen gets shown" }
+
+        engine.apply {
+            addSystem(AnimationSystem(context))
+            addSystem(RenderSystem(context))
+            addSystem(EntitySpawnSystem(context))
+
+            systems
+                .filterIsInstance<EventListener>()
+                .forEach { context.inject<Stage>().addListener(it) }
+        }
 
         MapChangedEvent(TmxMapLoader().load("map/map.tmx"))
             .let { stage.fire(it) }
     }
 
     override fun render(delta: Float) {
-        engine.update(delta);
-    }
-
-    override fun dispose() {
-        disposableRegistry.disposeSafely()
-        engine.removeAllSystems()
+        engine.update(delta)
     }
 
     override fun resize(width: Int, height: Int) {
