@@ -7,7 +7,8 @@ import ktx.ashley.optionalPropertyFor
 import ktx.math.vec2
 
 enum class SpawnType {
-    PLAYER
+    PLAYER,
+    SLIME,
 }
 
 data class SpawnConfiguration(

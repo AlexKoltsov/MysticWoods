@@ -60,6 +60,7 @@ class EntitySpawnSystem(
     private fun getSpawnConfiguration(type: SpawnType) = spawnConfigurationCache.getOrPut(type) {
         when (type) {
             SpawnType.PLAYER -> SpawnConfiguration(AnimationModel.PLAYER_IDLE)
+            SpawnType.SLIME -> SpawnConfiguration(AnimationModel.SLIME_IDLE)
         }
     }
 

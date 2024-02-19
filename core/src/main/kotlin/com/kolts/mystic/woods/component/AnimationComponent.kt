@@ -15,6 +15,8 @@ enum class AnimationModel {
     PLAYER_ATTACK_UP,
     PLAYER_ATTACK_DOWN,
     PLAYER_DEATH,
+
+    SLIME_IDLE
     ;
 
     val atlasKey: String = name.lowercase()
