@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.math.Vector2
 import ktx.ashley.optionalPropertyFor
-import ktx.math.vec2
 
 enum class SpawnType {
     PLAYER,
@@ -13,12 +12,13 @@ enum class SpawnType {
 
 data class SpawnConfiguration(
     val model: AnimationModel,
+    val position: Vector2,
+    val size: Vector2,
 )
 
 var Entity.spawnComponent by optionalPropertyFor<SpawnComponent>()
 
-class SpawnComponent(
-    var location: Vector2 = vec2(),
-) : Component {
+class SpawnComponent : Component {
+    lateinit var location: Vector2
     lateinit var type: SpawnType
 }

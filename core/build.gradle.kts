@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.gdx)
+    api(libs.bundles.gdx.core)
     api(libs.bundles.ktx)
 }
 

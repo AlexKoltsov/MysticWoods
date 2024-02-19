@@ -6,18 +6,21 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.kolts.mystic.woods.MysticWoodsGame.Companion.UNIT_SCALE
 import com.kolts.mystic.woods.TextureAtlasAsset
 import com.kolts.mystic.woods.component.*
 import com.kolts.mystic.woods.event.MapChangedEvent
+import com.kolts.mystic.woods.toBox2d
 import ktx.app.gdxError
 import ktx.ashley.add
 import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.with
+import ktx.box2d.body
+import ktx.box2d.box
 import ktx.inject.Context
 import ktx.log.logger
 import ktx.math.times
@@ -26,6 +29,7 @@ import ktx.tiled.property
 
 class EntitySpawnSystem(
     context: Context,
+    private val world: World = context.inject(),
     private val engine: Engine = context.inject(),
     private val assetManager: AssetManager = context.inject(),
 ) :
@@ -35,32 +39,48 @@ class EntitySpawnSystem(
     private val sizeCache = mutableMapOf<AnimationModel, Vector2>()
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity.spawnComponent?.let {
-            val spawnConfiguration = getSpawnConfiguration(it.type)
-            val model = spawnConfiguration.model
+        val spawnComponent = entity.spawnComponent!!
+        val spawnCfg = getSpawnConfiguration(spawnComponent)
 
-            engine.add {
-                removeEntity(entity)
+        engine.add {
+            removeEntity(entity)
 
-                entity {
-                    with<ImageComponent> {
-                        image = Image().apply {
-                            getSize(model).let { size -> setSize(size.x, size.y) }
-                            setPosition(it.location.x, it.location.y)
-                        }
-                    }
-                    with<AnimationComponent> {
-                        this.model = model
+            entity {
+                with<ImageComponent> {}
+                with<AnimationComponent> {
+                    model = spawnCfg.model
+                }
+                with<PhysicComponent> {
+                    body = world.body {
+                        userData = spawnCfg.size
+                        fixedRotation = true
+                        position.x = spawnCfg.position.x.toBox2d(spawnCfg.size.x)
+                        position.y = spawnCfg.position.y.toBox2d(spawnCfg.size.y)
+                        box(
+                            width = spawnCfg.size.x,
+                            height = spawnCfg.size.y
+                        ) {}
                     }
                 }
             }
         }
     }
 
-    private fun getSpawnConfiguration(type: SpawnType) = spawnConfigurationCache.getOrPut(type) {
-        when (type) {
-            SpawnType.PLAYER -> SpawnConfiguration(AnimationModel.PLAYER_IDLE)
-            SpawnType.SLIME -> SpawnConfiguration(AnimationModel.SLIME_IDLE)
+    private fun getSpawnConfiguration(spawnComponent: SpawnComponent) = with(spawnComponent) {
+        spawnConfigurationCache.getOrPut(type) {
+            when (type) {
+                SpawnType.PLAYER -> SpawnConfiguration(
+                    model = AnimationModel.PLAYER_IDLE,
+                    position = location,
+                    size = getSize(AnimationModel.PLAYER_IDLE)
+                )
+
+                SpawnType.SLIME -> SpawnConfiguration(
+                    model = AnimationModel.SLIME_IDLE,
+                    position = location,
+                    size = getSize(AnimationModel.SLIME_IDLE)
+                )
+            }
         }
     }
 
@@ -84,8 +104,7 @@ class EntitySpawnSystem(
                         engine.entity {
                             with<SpawnComponent> {
                                 type = spawnType(mapObject)
-                                location.x = mapObject.x * UNIT_SCALE
-                                location.y = mapObject.y * UNIT_SCALE
+                                location = vec2(mapObject.x, mapObject.y) * UNIT_SCALE
                             }
                         }
                     }

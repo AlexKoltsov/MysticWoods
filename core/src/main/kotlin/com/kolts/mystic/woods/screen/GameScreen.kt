@@ -6,9 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.kolts.mystic.woods.event.MapChangedEvent
 import com.kolts.mystic.woods.event.fire
-import com.kolts.mystic.woods.system.AnimationSystem
-import com.kolts.mystic.woods.system.EntitySpawnSystem
-import com.kolts.mystic.woods.system.RenderSystem
+import com.kolts.mystic.woods.system.*
 import ktx.app.KtxScreen
 import ktx.inject.Context
 import ktx.log.logger
@@ -26,6 +24,8 @@ class GameScreen(
             addSystem(AnimationSystem(context))
             addSystem(RenderSystem(context))
             addSystem(EntitySpawnSystem(context))
+            addSystem(PhysicsSystem(context))
+            addSystem(DebugSystem(context))
 
             systems
                 .filterIsInstance<EventListener>()
@@ -37,7 +37,7 @@ class GameScreen(
     }
 
     override fun render(delta: Float) {
-        engine.update(delta)
+        engine.update(delta.coerceAtMost(0.25f))
     }
 
     override fun resize(width: Int, height: Int) {

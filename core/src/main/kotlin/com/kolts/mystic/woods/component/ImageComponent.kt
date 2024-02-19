@@ -9,7 +9,7 @@ var Entity.imageComponent by optionalPropertyFor<ImageComponent>()
 
 class ImageComponent : Component, Comparable<ImageComponent> {
 
-    lateinit var image: Image
+    val image: Image = Image()
 
     override fun compareTo(other: ImageComponent): Int {
         return compareValuesBy(

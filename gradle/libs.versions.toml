@@ -5,7 +5,9 @@ ktx = "1.12.1-rc1"
 [libraries]
 gdx = { group = "com.badlogicgames.gdx", name = "gdx", version.ref = "gdx" }
 gdx-backend-lwjgl3 = { group = "com.badlogicgames.gdx", name = "gdx-backend-lwjgl3", version.ref = "gdx" }
+gdx-box2d = { group = "com.badlogicgames.gdx", name = "gdx-box2d", version.ref = "gdx" }
 gdx-platform = { group = "com.badlogicgames.gdx", name = "gdx-platform", version.ref = "gdx" }
+gdx-box2d-platform = { group = "com.badlogicgames.gdx", name = "gdx-box2d-platform", version.ref = "gdx" }
 
 ktx-app = { group = "io.github.libktx", name = "ktx-app", version.ref = "ktx" }
 ktx-log = { group = "io.github.libktx", name = "ktx-log", version.ref = "ktx" }
@@ -17,11 +19,27 @@ ktx-collections = { group = "io.github.libktx", name = "ktx-collections", versio
 ktx-math = { group = "io.github.libktx", name = "ktx-math", version.ref = "ktx" }
 ktx-tiled = { group = "io.github.libktx", name = "ktx-tiled", version.ref = "ktx" }
 ktx-inject = { group = "io.github.libktx", name = "ktx-inject", version.ref = "ktx" }
+ktx-box2d = { group = "io.github.libktx", name = "ktx-box2d", version.ref = "ktx" }
 
 
 [bundles]
-gdx = ["gdx", "gdx-backend-lwjgl3", "gdx-platform"]
-ktx = ["ktx-app", "ktx-log", "ktx-graphics", "ktx-actors", "ktx-assets", "ktx-ashley", "ktx-collections", "ktx-math", "ktx-tiled", "ktx-inject"]
+gdx-core = [
+    "gdx",
+    "gdx-box2d"
+]
+ktx = [
+    "ktx-app",
+    "ktx-log",
+    "ktx-graphics",
+    "ktx-actors",
+    "ktx-assets",
+    "ktx-ashley",
+    "ktx-collections",
+    "ktx-math",
+    "ktx-tiled",
+    "ktx-inject",
+    "ktx-box2d"
+]
 
 [plugins]
 versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }
